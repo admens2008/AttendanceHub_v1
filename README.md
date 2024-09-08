@@ -84,10 +84,10 @@ Email Notifications: Admins are notified via email when staff sign out, ensuring
 
 API Endpoints
 
-POST /api/attendance/clockin: Clock in staff for the day.
-POST /api/attendance/clockout: Record clock-out time.
-GET /api/reports: Generate attendance reports.
-POST /api/attendance/revoke: Revoke an attendance record.
+1. POST /api/attendance/clockin: Clock in staff for the day.
+2. POST /api/attendance/clockout: Record clock-out time.
+3. GET /api/reports: Generate attendance reports.
+4. POST /api/attendance/revoke: Revoke an attendance record.
 
 Contributing
 
