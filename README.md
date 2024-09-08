@@ -56,6 +56,7 @@ Ensure you have the following installed on your machine:
 
 
 Setting up Database
+
 CREATE database AttendanceHub;
 CREATE  user 'AttendanceHub'@'localhost' identified by 'AttendanceHub';
 
@@ -82,15 +83,18 @@ Revoking Attendance: Admins have the ability to revoke incorrect or unauthorized
 Email Notifications: Admins are notified via email when staff sign out, ensuring oversight of daily attendance activities.
 
 API Endpoints
+
 POST /api/attendance/clockin: Clock in staff for the day.
 POST /api/attendance/clockout: Record clock-out time.
 GET /api/reports: Generate attendance reports.
 POST /api/attendance/revoke: Revoke an attendance record.
 
 Contributing
+
 We welcome contributions to improve AttendanceHub! Here's how you can help:
 
 Fork the project.
+
 Create a feature branch: git checkout -b my-new-feature.
 Commit your changes: git commit -m 'Add some feature'.
 Push to the branch: git push origin my-new-feature.
