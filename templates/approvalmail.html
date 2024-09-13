@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333333;
+        }
+
+        p {
+            color: #555555;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            background-color: #3498db;
+            color: #ffffff;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+
+        .info-section {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .info-section h2 {
+            color: #333333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info-section p {
+            margin: 5px 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #999999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Attendance Approval</h1>
+        <p>Dear {{ admin_name|escape }},</p>
+        <p>Please approve attendance ({{ current_date.strftime("%d %B %Y") }}) for staff - <b>{{ staffname|escape }}</b>.</p>
+<!--         
+        <div class="info-section">
+            <h2>Staff Details</h2>
+            <p><strong>Name:</strong> {{ staffname|escape }}</p>
+            <p><strong>Position:</strong> {{ staff_position|escape }}</p>
+            <p><strong>Department:</strong> {{ staff_department|escape }}</p>
+            <p><strong>Date:</strong> {{ attendance_date|escape }}</p>
+        </div> -->
+        <a class="button" href="{{ confirm_url }}">Click here to Approve staff attenance</a>
+        
+        <p>Thank you,<br>AttendanceHub</p>
+        
+        <div class="footer">
+            <p>For any inquiries, contact us at support@attendancehub.com.</p>
+            <p>Visit our website: <a href="https://AttendanceHub.mensah.tech">AttendanceHub</a></p>
+        </div>
+    </div>
+</body>
+
+</html>

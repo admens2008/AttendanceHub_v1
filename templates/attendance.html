@@ -1,0 +1,207 @@
+{% extends 'Master.html'%}
+
+{% block title %}
+
+MARK ATTENDANCE SECTION
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 500px;
+            margin-top: 50px;
+        }
+        .btn {
+            width: 100%;
+            margin-bottom: 15px;
+            height: 60px; /* Increase the height of the buttons */
+        }
+    </style>
+{% endblock title%}
+
+{% block contents %}
+<div class="container">
+    {% if status == "marked" %}
+    <label  id="lblweldone" >Good job, your attendance have been registered for today.. Thank you!!!</label>
+    {% endif %}
+    {% if status == '' %}
+    <label  id="lblweldone" >No attendance has been set for today.</label>
+    {% endif %}
+    {% if status == "exceeded" %}
+    <label  id="lblweldone" >All attendance taken for today!!!</label>
+    {% endif %}
+    {% if status == "Active" %}
+    <form>
+        {% if flag == 0 %}
+        <div class="form-group text-center">
+            <button type="button" style="font-size:xx-large;" class="btn btn-outline-secondary" onclick="clockInOut('signin', '{{ user_id }}')">
+                <i class="fas fa-sign-in-alt"></i> Clock In
+            </button>
+        </div>
+        {% else %}
+        <div class="form-group text-center">
+            <button type="button" style="font-size:xx-large;" class="btn btn-outline-secondary" onclick="clockInOut('signout', '{{ user_id }}')">
+                <i class="fas fa-sign-out-alt"></i> Clock Out
+            </button>
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+            {% if flag == 0 %}
+            <label  id="lblreason" for="textArea" hidden>Why are you late to work :</label>
+            {% else %}
+            <label  id="lblreason2" for="textArea" hidden>Why are you leaving before the close of work:</label>
+            {% endif %}
+            <textarea class="form-control" id="txtreason" rows="4" placeholder="Type something..." hidden></textarea>
+        </div>
+    </form>
+    {% endif %}
+</div>
+<div id="overlay">
+    <div class="spinner"></div>
+</div>
+<div id="successMessage" style="display: none;"></div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+    let jwtToken = '';
+    function getCookie(name) {
+        const cookieArray = document.cookie.split('; ');
+        for (const cookie of cookieArray) {
+            const [cookieName, cookieValue] = cookie.split('=');
+            if (cookieName === name) {
+                return cookieValue;
+            }
+        }
+        return null;
+    }
+    
+    jwtToken = getCookie('jwtToken');
+    console.log(jwtToken);
+$(document).ready(function () {
+    let start_time = '{{ start_time }}';
+    let end_time = '{{ end_time }}';
+    let flag = '{{ flag }}';
+    const t = new Date();
+    const st = new Date(start_time);
+    const et = new Date(end_time);
+    if (t > st && flag == 0) {   
+        document.getElementById('lblreason').removeAttribute('hidden');
+        document.getElementById('txtreason').removeAttribute('hidden');
+    }
+    if (t < et && flag != 0 ) {   
+        document.getElementById('lblreason2').removeAttribute('hidden');
+        document.getElementById('txtreason').removeAttribute('hidden');
+            }
+
+});
+
+function clockInOut(Type, userId) 
+    {
+        let start_time = '{{ start_time }}';
+    let end_time = '{{ end_time }}';
+    let flag = '{{ flag }}';
+    var confirmdelete;
+    const t = new Date();
+    const st = new Date(start_time);
+    const et = new Date(end_time);
+    const reason =  document.getElementById('txtreason');
+    if (t > st && flag == 0 && reason.value === '') {
+        alert('please state the reason you are late');
+        reason.focus();
+        return;
+    }
+    if (t < et && flag == 1 && reason.value === '') {
+        alert('please state the reason you leaving early');
+        reason.focus();
+        return;
+    }
+    if (Type === 'signin') {
+        confirmdelete = confirm("do you want to proceed to sign in your attenance?");
+    }
+    else {
+        confirmdelete = confirm("do you want to proceed to sign out your attenance?");
+    }
+        if (confirmdelete) {
+            showLoadingSpinner();
+            fetch('/clockInOut/' + userId, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    'userid': userId,
+                    'work_start_time': start_time,
+                    'work_end_time': end_time,
+                    'reason': reason.value,
+                    'Type': Type }),
+            })
+            .then(response =>  {
+                if (!response.ok) {
+                    window.location.href = '/signin?next=/attendance/{{ user_id }}';
+                }
+                return response.json();
+                })
+            .then(data => {
+                hideLoadingSpinner();
+                if (data.message){
+                showSuccessMessage(data.message);
+                }
+                if (data.error){
+                    showSuccessMessage(data.error);
+                    }
+
+                // Hide the success message after a few seconds
+                setTimeout(() => {
+                    hideSuccessMessage();
+                    location.reload();
+                }, 5000);
+
+                if (data.status === 'success') {
+                    //location.reload();
+                    window.location.href = window.location.href;
+                    //document.getElementById('search').click();
+                } else {
+                    console.error('Error:', data.message);
+                    // Handle error as needed
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle error as needed
+            });
+
+        }
+    }
+
+
+
+function showLoadingSpinner() {
+    document.getElementById('overlay').style.display = 'flex';
+}
+
+function hideLoadingSpinner() {
+    document.getElementById('overlay').style.display = 'none';
+}
+function showSuccessMessage(text) {
+  message =  document.getElementById('successMessage');
+  message.innerHTML = text;
+  message.style.display = 'block';
+
+}
+
+function hideSuccessMessage() {
+    document.getElementById('successMessage').style.display = 'none';
+}
+
+</script>
+{% endblock contents %}
