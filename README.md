@@ -51,7 +51,8 @@ Ensure you have the following installed on your machine:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/AttendanceHub.git
+   git clone https://github.com/your-username/AttendanceHub_v1
+.git
    cd AttendanceHub
 
 
@@ -84,10 +85,10 @@ Email Notifications: Admins are notified via email when staff sign out, ensuring
 
 API Endpoints
 
-1. POST /api/attendance/clockin: Clock in staff for the day.
-2. POST /api/attendance/clockout: Record clock-out time.
-3. GET /api/reports: Generate attendance reports.
-4. POST /api/attendance/revoke: Revoke an attendance record.
+1. POST /attendance/<user_id>: Clock in staff for the day.
+2. POST /clockInOut/<user_id>: Record clock-in and out time.
+3. GET /attendancereport/<user_id>: Generate attendance reports.
+4. POST /revokehourboard/<user_id>: Revoke an attendance record.
 
 Contributing
 
