@@ -9,7 +9,6 @@ AttendanceHub is a robust web application designed to efficiently track staff at
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
