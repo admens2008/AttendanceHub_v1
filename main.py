@@ -1043,7 +1043,7 @@ def revokehourboard(user_id):
         searchdate = qs.date()
         selectusers = request.form.get('selectusers')
         ws = Workday.query.filter_by(company_id=u.company_id, workday_date=searchdate).first()
-        if ws.end_time > qs:
+        if ws is not None and ws.end_time > qs:
             in_status = 'LEFT BEFORE CLOSE OF WORK'
         else:
             in_status = 'CLOSED NORMAL TIME'
