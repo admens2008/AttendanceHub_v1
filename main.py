@@ -42,7 +42,7 @@ def hours_and_minutes_filter(mins):
 with app.app_context():
     db.create_all()
         
-""" @app.before_request
+""" @app.before_request comment
 def create_tables():
     db.create_all() """
 
