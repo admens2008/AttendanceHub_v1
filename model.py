@@ -126,6 +126,7 @@ class Company(db.Model):
     confirm = db.Column(db.Boolean, default=False)
     users = db.relationship('User', backref='company', lazy=True)
     workdays = db.relationship('Workday', backref='company', lazy=True)
+    Worktransactions = db.relationship('Worktransaction', backref='company', lazy=True)
     
     def __init__(self, company_name, company_email, company_website,company_address):
         self.companyid = str(uuid4())
@@ -159,6 +160,7 @@ class Workday(db.Model):
 class Worktransaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     worktransid = db.Column(db.String(255), unique=True, nullable=True)
+    company_id = db.Column(db.String(255), db.ForeignKey('company.companyid'), nullable=True)
     Date = db.Column(db.DateTime, nullable=True)
     sign_in_time =  db.Column(db.DateTime, nullable=True)
     time_diff_from_starttime = db.Column(db.Integer, default=0)
@@ -177,7 +179,7 @@ class Worktransaction(db.Model):
                  sign_in_status, sign_in_reasons, sign_out_time,
                  sign_out_status, sign_out_reasons, is_approved,
                  approved_by,
-                 Total_hours_worked, userid, workdayid):
+                 Total_hours_worked, userid, workdayid, company_id):
         self.worktransid = str(uuid4())
         self.Date = Date
         self.time_diff_from_starttime = time_diff_from_starttime
@@ -193,6 +195,7 @@ class Worktransaction(db.Model):
         self.Total_hours_worked = Total_hours_worked
         self.userid = userid
         self.workdayid = workdayid
+        self.company_id = company_id
         
     
 class User(UserMixin, db.Model):
