@@ -1,0 +1,623 @@
+{% extends 'Master.html'%}
+
+{% block title %}
+Working hours dashboard
+{% endblock title%}
+
+{% block contents %}
+<div class="container">
+    <button type="button"  class="btn btn-outline-secondary mb-4" data-bs-toggle="modal" data-bs-target="#filterModal">
+        Filter
+    </button>
+    <br>
+    <br>
+
+    <!-- Create Test Button -->
+    <button type="button" class="btn btn-outline-secondary mb-4" data-bs-toggle="modal" data-bs-target="#createUserModal">
+        Create Working Hours
+    </button>
+    <!-- Test List Table -->
+  
+    <br>
+    {% if not pages.items %}
+    no records found
+
+    {% endif %}
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Work day</th>
+                    <th>Start time</th>
+                    <th>End time</th>
+                    <th>Work status</th>
+                    <th style="text-align: center;" colspan="2">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in pages.items %}
+                <td>         
+                    {{ loop.index }}        
+                             </td>
+                            <td>{{ user.workday_date.strftime('%d %b %Y') }}</td>
+                             {% if  user.work_status == 'Active' %}
+                        <td>{{ user.start_time.strftime('%I:%M %p') }} </td>
+                        <td>{{ user.end_time.strftime('%I:%M %p') }} </td>
+                        {% else %}
+                        <td> --- </td>
+                        <td>--- </td>
+                        {% endif %}
+                        <td> {{ user.work_status }}</td>
+                        <td style="text-align: center;" >
+<button type="button" class="btn btn-outline-success" onclick="modifywork('{{ user.workdayid }}')" data-bs-toggle="modal" data-bs-target="#modifyUserModal">Edit</button>
+<button type="button" class="btn btn-danger" onclick="deletework('{{ user.workdayid }}')">Delete</button>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- navigation -->
+<div class=" d-flex justify-content-center" style="margin-top: 30px;">
+<nav aria-label="...">
+    <ul class="pagination">
+        <li class="page-item {% if not pages.has_prev %} disabled {% endif %}">
+            <a class="page-link" href="./{{user_id}}?page={{ pages.prev_num }}">Previous</a>
+        </li>
+
+        {% for page in pages.iter_pages() %}
+            <li class="page-item {% if page == pages.page %} active {% endif %}">
+                <a class="page-link" href="./{{user_id}}?page={{ page }}">{{ page }}</a>
+            </li>
+        {% endfor %}
+
+        <li class="page-item {% if not pages.has_next %} disabled {% endif %}">
+            <a class="page-link" href="./{{user_id}}?page={{ pages.next_num }}">Next</a>
+        </li>
+    </ul>
+</nav>
+</div>
+<!-- filter  -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModal">Search by Date</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="./{{ user_id }}" method="post">
+                    <div class="row mb-8">
+                        <input type="hidden" name="q" value="name">
+                        <div class="col">
+                            <!-- <input type="text" class="form-control" name="name" id="name" placeholder="Enter name"> -->
+                        From :  <input type="date"  name="name" id="name" class="form-control">
+                        <br>
+                        To :  <input type="date"  name="name2" id="name2" class="form-control">
+                    
+                        
+                    </div>
+                    
+                    </div>
+                    <br>
+                    <div class="row mb-8" style="float:right;">
+                        <div class="col">
+                            
+                            <button type="submit" class="btn btn-outline-secondary mb-4" onclick="showLoadingSpinner()" id='search'>Search</button>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create user Modal -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel">New work hour(s)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="align-items:center;">
+                <div class="containerwork">
+                <!-- Add your form for creating a test here -->
+                <form method="post" id="Createform">
+                <div class="mb-3 row">
+                    <div >
+                       Pick a day: <input type="date" name="date" id="date" class="form-control" required>
+                    </div>
+                </div>
+               
+                <div class="mb-3 row">
+                
+                    <div >
+                        Work Start Time:
+                     <input type="time" name="starttime" id="starttime" class="form-control">
+                    </div>
+                 </div>
+                <div class="mb-3 row">
+                    
+                        <div >
+                            Work End Time:
+                        <input type="time" name="endtime" id="endtime" class="form-control">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div >
+                        Select work status:
+                    <!-- <input type="time" name="time" id="time" class="form-control" required> -->
+                    <select class="form-select" name="selectwork" id="selectwork"  aria-label="Default select example" required>
+                        <option selected>Select work type</option>
+                        <option value="Active">Active</option>
+                        <option value="Public holiday">Public holiday</option>
+                        <option value="Others(No work)">Others(No work)</option>
+                      </select>
+                </div>
+            </div>
+                 
+                    
+                </div>
+                    <div class="action-button">
+                        <div style="float: right;">
+                            <button type="submit" tabindex="-1" class="btn btn-outline-secondary" onclick="saveworkday('{{ user_id }}')">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- modify user data -->
+
+<div class="modal fade" id="modifyUserModal" tabindex="-1" aria-labelledby="modifyUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modifyUserModalLabel">Modify Work Day(s)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Add your form for modifying a User here -->
+                <form method="post" id="modifyform">
+                    
+                    <div class="mb-3 row">
+                        <div >
+                           Pick a day: <input type="date" name="moddate" id="moddate" class="form-control" required>
+                        </div>
+                    </div>
+                   
+                    <div class="mb-3 row">
+                    
+                        <div >
+                            Work Start Time:
+                         <input type="time" name="modstarttime" id="modstarttime" class="form-control">
+                        </div>
+                     </div>
+                    <div class="mb-3 row">
+                        
+                            <div >
+                                Work End Time:
+                            <input type="time" name="modendtime" id="modendtime" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div >
+                            Select work status:
+                        <!-- <input type="time" name="time" id="time" class="form-control" required> -->
+                        <select class="form-select" name="modselectwork" id="modselectwork"  aria-label="Default select example" required>
+                            <option selected>Select work type</option>
+                            <option value="Active">Active</option>
+                            <option value="Public holiday">Public holiday</option>
+                            <option value="Others(No work)">Others(No work)</option>
+                          </select>
+                          <input type="text"   id="moduserid" hidden>
+                    </div>
+                </div>
+                     
+                   
+                        <div class="action-button">
+                            <div style="float: right;">
+                                <button type="submit" tabindex="-1" class="btn btn-outline-secondary" onclick="saveworkday('{{ user_id }}')">Submit</button>
+                            </div>
+                        </div>
+                
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="overlay">
+    <div class="spinner"></div>
+</div>
+<div id="successMessage" style="display: none;"></div>
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+    let jwtToken = '';
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get today's date
+        const today = new Date();
+        const todayDate = today.toISOString().split('T')[0];
+        
+        // Set the default value for the date input
+        document.getElementById('name').value = todayDate;
+        document.getElementById('name2').value = todayDate;
+    });
+    function getCookie(name) {
+        const cookieArray = document.cookie.split('; ');
+        for (const cookie of cookieArray) {
+            const [cookieName, cookieValue] = cookie.split('=');
+            if (cookieName === name) {
+                return cookieValue;
+            }
+        }
+        return null;
+    }
+    
+    jwtToken = getCookie('jwtToken');
+    console.log(jwtToken);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get today's date
+        const today = new Date();
+        const todayDate = today.toISOString().split('T')[0];
+        
+        // Set the default value for the date input
+        document.getElementById('date').value = todayDate;
+    });
+    function formatDate(dateString) {
+        var date = new Date(dateString);
+        var year = date.getFullYear();
+        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+        var day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    // Function to format time string to HH:MM (24-hour format)
+// Function to format time string to HH:MM AM/PM
+function formatTimeTo12Hour(timeString) {
+    var date = new Date(timeString);
+    var hours = date.getUTCHours();
+    var minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    var period = hours >= 12 ? 'PM' : 'AM';
+   
+    // Convert to 12-hour format
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    hours = hours.toString().padStart(2, '0');
+    return `${hours}:${minutes} ${period}`;
+}
+// Function to convert 12-hour time to 24-hour time
+function convertTo24Hour(timeString) {
+    var [time, period] = timeString.split(' ');
+    var [hours, minutes] = time.split(':');
+    hours = parseInt(hours, 10);
+    if (period === 'PM' && hours < 12) {
+        hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+        hours = 0;
+    }
+    return `${hours.toString().padStart(2, '0')}:${minutes}`;
+}
+    function modifywork(workdayid) {
+        var moduserid = document.getElementById("moduserid");
+        moduserid.value = workdayid;
+        //alert(moduserid.value);
+        showLoadingSpinner();
+        fetch('/get_work/' + workdayid, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                'workdayid': workdayid}),
+        })
+        .then(response => {
+            if (!response.ok) {
+                window.location.href = '/signin?next=/workhourboard/{{ user_id }}';
+            }
+            return response.json();
+            })
+        .then(data => {
+            hideLoadingSpinner();
+            if (data.message){
+            showSuccessMessage(data.message);
+            }
+            if (data.error){
+                showSuccessMessage(data.error);
+                }
+
+            // Hide the success message after a few seconds
+            setTimeout(() => {
+                hideSuccessMessage();
+            }, 5000);
+            if (data.status === 'success') {
+                var moddate = document.getElementById('moddate');
+                moddate.value = formatDate(data.workday_date);
+                var status = document.getElementById('modselectwork');
+                status.value = data.work_status;
+                if (data.work_status === "Active") {
+                var start_time = document.getElementById('modstarttime');
+                start_time.value = convertTo24Hour(formatTimeTo12Hour(data.start_time));
+                var end_time = document.getElementById('modendtime');
+                end_time.value = convertTo24Hour(formatTimeTo12Hour(data.end_time));
+                }
+            } else {
+                console.error('Error:', data.message);
+                // Handle error as needed
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Handle error as needed
+        });
+    }
+    $(document).ready(function () {
+        let email = '';
+        let userId = '{{ user_id }}';
+        // Attach a submit event listener to the form
+        $('#Createform').submit(function (event) {
+            // Prevent the default form submission
+            event.preventDefault();
+        var date = document.getElementById('date').value;
+        var starttime = document.getElementById('starttime').value;
+        var endtime = document.getElementById('endtime').value;
+        var selectwork = document.getElementById('selectwork').value;
+        const t = new Date();
+        const td = t.toISOString().split('T')[0];
+        if (date < td) {
+            alert('Unable to set a date in the past, Please correct and try again.');
+            return;
+        }
+        if (starttime > endtime) {
+            alert('Your Date(s) are misplaced, Please correct and try again.');
+            return;
+        }
+        if (selectwork === 'Select work type') {
+            alert('Please select work status.');
+            return;
+        }
+        else if (selectwork === "Active" && (starttime === '' || endtime === '')) {
+            alert('Please fill all fields correctly.');
+            return;
+        }
+        else if (selectwork !== "Active") {
+            endtime = '';
+            starttime = '';
+        }
+    showLoadingSpinner();
+        fetch('/saveworkday/' + userId, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                'workday_date': date,
+                'start_time': starttime,
+                'end_time':  endtime,
+                'work_status': selectwork}),
+        })
+        .then(response => {
+            if (!response.ok) {
+                //var firstName = document.getElementById('firstName');
+                //firstName.value = '';
+                window.location.href = '/signin?next=/workhourboard/{{ user_id }}';
+            }
+            return response.json();
+            })
+        .then(data => {
+            hideLoadingSpinner();
+            if (data.message){
+            showSuccessMessage(data.message);
+            }
+            if (data.error){
+                showSuccessMessage(data.error);
+                }
+
+            // Hide the success message after a few seconds
+            setTimeout(() => {
+                hideSuccessMessage();
+            }, 5000);
+            if (data.status === 'success') {
+                // Refresh the current page on success
+                //console.log(data);
+                //location.reload();
+                window.location.href = window.location.href;
+                //document.getElementById('search').click();
+                
+            } else {
+                console.error('Error:', data.error);
+                // Handle error as needed
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Handle error as needed
+        });
+    });
+
+
+
+    $('#modifyform').submit(function (event) {
+        // Prevent the default form submission
+        event.preventDefault();
+        var moduserid  = document.getElementById('moduserid').value;
+        var date = document.getElementById('moddate').value;
+        var starttime = document.getElementById('modstarttime').value;
+        var endtime = document.getElementById('modendtime').value;
+        var selectwork = document.getElementById('modselectwork').value;
+        const t = new Date();
+        const td = t.toISOString().split('T')[0];
+        if (date < td) {
+            alert('Unable to modify a date in the past, Please correct and try again.');
+            return;
+        }
+        if (starttime > endtime) {
+            alert('Your Date(s) are misplaced, Please correct and try again.');
+            return;
+        }
+        if (selectwork === 'Select work type') {
+            alert('Please select work status.');
+            return;
+        }
+        else if (selectwork === "Active" && (starttime === '' || endtime === '')) {
+            alert('Please fill all fields correctly.');
+            return;
+        }
+        else if (selectwork !== "Active") {
+            endtime = '';
+            starttime = '';
+        }
+showLoadingSpinner();
+    fetch('/saveworkday/' + userId, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            'workday_date': date,
+                'start_time': starttime,
+                'end_time':  endtime,
+                'moduserid': moduserid,
+                'mod': true,
+                'work_status': selectwork}),
+    })
+    .then(response => {
+        if (!response.ok) {
+           //var mdfirstName = document.getElementById('modfirstName');
+            //modfirstName.value = '';
+            //var moduserid = document.getElementById('moduserid');
+            //moduserid.value = '';
+            window.location.href = '/signin?next=/workhourboard/{{ user_id }}';
+        }
+        return response.json();
+        })
+    .then(data => {
+        hideLoadingSpinner();
+        var moduserid = document.getElementById('moduserid');
+        moduserid.value = '';
+        if (data.message){
+        showSuccessMessage(data.message);
+        }
+        if (data.error){
+            showSuccessMessage(data.error);
+            }
+
+        // Hide the success message after a few seconds
+        setTimeout(() => {
+            hideSuccessMessage();
+        }, 5000);
+        if (data.status === 'success') {
+            // Refresh the current page on success
+            //console.log(data);
+            //location.reload();
+            window.location.href = window.location.href;
+            //document.getElementById('search').click();
+        } else {
+            console.error('Error:', data.message);
+            // Handle error as needed
+        }
+    })
+    .catch(error => {
+        var moduserid = document.getElementById('moduserid');
+        moduserid.value = '';
+        console.error('Error:', error);
+        // Handle error as needed
+    });
+
+});
+ 
+});
+
+
+function deletework(workdayid) 
+    {
+        var confirmdelete = confirm("This action will remove the user and all records associated with the user, do you want to proceed?");
+        if (confirmdelete) {
+            showLoadingSpinner();
+            fetch('/deletework/' + workdayid, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 'workdayid': workdayid }),
+            })
+            .then(response =>  {
+                if (!response.ok) {
+                    window.location.href = '/signin?next=/workhourboard/{{ user_id }}';
+                }
+                return response.json();
+                })
+            .then(data => {
+                hideLoadingSpinner();
+                if (data.message){
+                showSuccessMessage(data.message);
+                }
+                if (data.error){
+                    showSuccessMessage(data.error);
+                    }
+
+                // Hide the success message after a few seconds
+                setTimeout(() => {
+                    hideSuccessMessage();
+                    location.reload();
+                }, 5000);
+
+                if (data.status === 'success') {
+                    //location.reload();
+                    window.location.href = window.location.href;
+                    //document.getElementById('search').click();
+                } else {
+                    console.error('Error:', data.message);
+                    // Handle error as needed
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle error as needed
+            });
+
+        }
+    }
+
+
+
+function showLoadingSpinner() {
+    document.getElementById('overlay').style.display = 'flex';
+}
+
+function hideLoadingSpinner() {
+    document.getElementById('overlay').style.display = 'none';
+}
+function showSuccessMessage(text) {
+  message =  document.getElementById('successMessage');
+  message.innerHTML = text;
+  message.style.display = 'block';
+
+}
+
+function hideSuccessMessage() {
+    document.getElementById('successMessage').style.display = 'none';
+}
+
+</script>
+{% endblock contents %}
