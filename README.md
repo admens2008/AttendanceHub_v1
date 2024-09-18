@@ -47,7 +47,8 @@ AttendanceHub is a robust web application designed to efficiently track staff at
 Ensure you have the following installed on your machine:
 - Python 3.8+
 - Virtualenv
-- MySQL/PostgreSQL
+- MySQL
+- and othe dependencies in the requirements.txt file
 
 ### Steps
 
