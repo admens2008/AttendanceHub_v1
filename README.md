@@ -12,22 +12,25 @@ AttendanceHub is a robust web application designed to efficiently track staff at
 
 ## Features
 
-1. **Clock-in/Clock-out System**: 
+1. **Staff management**: 
+   - Employees records of your company or business are properly managed.
+
+2. **Clock-in/Clock-out System**: 
    - Employees can easily clock in and out, with accurate time tracking for hours worked.
 
-2. **Attendance Revocation**: 
+3. **Attendance Revocation**: 
    - Admins can revoke attendance entries in case of mistakes or invalid logs.
 
-3. **View Reports**: 
+4. **View Reports**: 
    - Detailed reports on staff attendance, total hours worked, and overtime can be generated.
 
-4. **Email Notifications**: 
+5. **Email Notifications**: 
    - Admins receive automated email notifications when staff clock out, ensuring up-to-date records.
 
-5. **Attendance Management**: 
+6. **Attendance Management**: 
    - A comprehensive module allowing admins and staff to mark, set, and manage attendance entries efficiently.
 
-6. **User-Friendly Dashboard**: 
+7. **User-Friendly Dashboard**: 
    - An intuitive dashboard for tracking  attendance and performance analytics.
 
 ## Technologies
