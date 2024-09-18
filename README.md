@@ -92,6 +92,7 @@ API Endpoints
 2. POST /clockInOut/<user_id>: Record clock-in and out time.
 3. GET /attendancereport/<user_id>: Generate attendance reports.
 4. POST /revokehourboard/<user_id>: Revoke an attendance record.
+5. POST:GET:DELETE /userboard/<user_id> staff recods
 
 Contributing
 
