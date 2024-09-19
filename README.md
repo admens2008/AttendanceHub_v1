@@ -13,7 +13,7 @@ AttendanceHub is a robust web application designed to efficiently track staff at
 ## Features
 
 1. **Staff management**: 
-   - Employees records of your company or business are properly managed.
+   - Employees records of your company or business are captured accuately and secured.
 
 2. **Clock-in/Clock-out System**: 
    - Employees can easily clock in and out, with accurate time tracking for hours worked.
