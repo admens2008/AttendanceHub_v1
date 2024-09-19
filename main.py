@@ -1359,7 +1359,6 @@ def signup_post():
     db.session.commit()
     send_confirm_mail(email, 'adjeimensah2003@yahoo.com', user.userid, user.last_name + ' ' + user.first_name)
     return jsonify({'user_id': user.userid , 'message': 'Thank you for signing up, please check your email to complete your registration'})
-    #""" except:
     #""" return jsonify({'error': 'A error occured please try again '})
 
 @app.route('/testcompanion_confirm/<user_id>', methods=['GET'])
