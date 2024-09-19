@@ -54,9 +54,9 @@ Ensure you have the following installed on your machine:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/AttendanceHub_v1
+   git clone https://github.com/admens2008/AttendanceHub_v1
 .git
-   cd AttendanceHub
+   cd AttendanceHub_v1
 
 
 Setting up Database
@@ -93,6 +93,7 @@ API Endpoints
 3. GET /attendancereport/<user_id>: Generate attendance reports.
 4. POST /revokehourboard/<user_id>: Revoke an attendance record.
 5. POST:GET:DELETE /userboard/<user_id> staff recods
+6. POST:GET /profileboard/<user_id> Manage personal profile
 
 Contributing
 
